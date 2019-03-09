@@ -35,11 +35,11 @@ echo link the library to the example...
 cd ${WORKSPACE_DIR}/example
 yarn add file:./library > /dev/null 2>&1
 
-echo done preparation, temporary workspace is at "${WORKSPACE_DIR}/example"
+echo temporary workspace: \"${WORKSPACE_DIR}/example\"
 
 echo create now.sh deployment...
 export DEPLOYMENT_URL=$(now --no-clipboard 2>/dev/null)
-echo done deploying, app is available at "${DEPLOYMENT_URL}"
+echo deployment url: \"${DEPLOYMENT_URL}\"
 
 if [ ! -z ${RUN_NOW_ALIAS} ];
 then
