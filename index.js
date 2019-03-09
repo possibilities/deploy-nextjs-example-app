@@ -47,13 +47,13 @@ sh.mv(join(workspaceDir, 'library'), join(workspaceDir, 'example', 'library'))
 
 sh.echo(`│ link the library to the example`)
 sh.cd(join(workspaceDir, 'example'))
-sh.exec('yarn add file:./library')
+handleError(sh.exec('yarn add file:./library'))
 
 sh.echo(`│ install the example dependencies`)
 sh.cd(join(workspaceDir, 'example', 'library'))
-sh.exec('yarn install')
+handleError(sh.exec('yarn install'))
 const build = handleError(sh.echo(`│ build the example artifacts`))
-sh.exec('yarn build')
+handleError(sh.exec('yarn build'))
 
 sh.echo(`│ create now.sh deployment`)
 sh.cd(join(workspaceDir, 'example'))
