@@ -14,7 +14,13 @@ ln -sf ${PWD}/link-nextjs-example-app-to-library.sh ~/local/bin/link-nextjs-exam
 ## Usage
 
 ```Shell
-cd $(link-nextjs-example-to-library) && now
+link-nextjs-example-app-to-library
+```
+
+To also run `now ln` also an `--alias` CLI flag can be used
+
+```Shell
+link-nextjs-example-app-to-library --alias
 ```
 
 ## Is this really necessary?
