@@ -48,6 +48,7 @@ if (runNowAlias) {
   sh.echo(`│ create alias to latest deployment`)
   const aliasUrl = sh
     .exec(`now alias set ${deploymentUrl}`)
+    .stdout
     .split('\n')
     .split(' ')[2]
   sh.echo(`└ alias "https://${aliasUrl}" updated`)
