@@ -1,13 +1,13 @@
 {
   "name": "deploy-nextjs-example-app",
-  "version": "0.0.3",
+  "version": "0.0.2",
   "license": "MIT",
   "scripts": {
     "release": "npm-run-all --serial \"release:cut -- {@}\" release:publish --",
-    "test": "standard",
-    "lint": "standard",
     "release:cut": "release",
     "release:publish": "npm publish",
+    "test": "standard",
+    "lint": "standard",
     "dev": "nodemon --quiet --exec 'standard && echo linting: OK' --watch '**/*.js' --ignore node_modules"
   },
   "bin": {
