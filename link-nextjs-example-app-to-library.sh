@@ -38,13 +38,13 @@ yarn add file:./library > /dev/null 2>&1
 echo done preparation, temporary workspace is at "${WORKSPACE_DIR}/example"
 
 echo create now.sh deployment...
-export DEPLOYMENT_URL=$(now --no-clipboard) > /dev/null 2>&1
+export DEPLOYMENT_URL=$(now --no-clipboard > /dev/null)
 echo done deploying, app is available at "${DEPLOYMENT_URL}"
 
 if [ ! -z ${RUN_NOW_ALIAS} ];
 then
   echo create alias to latest deployment...
-  export ALIAS_URL=$(now alias $DEPLOYMENT_URL) > /dev/null 2>&1
+  export ALIAS_URL=$(now alias set $DEPLOYMENT_URL > /dev/null)
   echo done aliasing, app is available at ${ALIAS_URL}
 fi
 
