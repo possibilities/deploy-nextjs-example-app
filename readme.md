@@ -8,19 +8,19 @@ The project is copied and the configured project is placed in a temporary direct
 ## Install
 
 ```Shell
-ln -sf ${PWD}/link-nextjs-example-app-to-library.sh ~/local/bin/link-nextjs-example-app-to-library
+ln -sf ${PWD}/deploy-nextjs-example-app.sh ~/local/bin/deploy-nextjs-example-app
 ```
 
 ## Usage
 
 ```Shell
-link-nextjs-example-app-to-library
+deploy-nextjs-example-app
 ```
 
 To also run `now ln` also an `--alias` CLI flag can be used
 
 ```Shell
-link-nextjs-example-app-to-library --alias
+deploy-nextjs-example-app --alias
 ```
 
 ## Is this really necessary?
