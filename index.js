@@ -3,14 +3,15 @@ const { join, relative, dirname } = require('path')
 const { ulid } = require('ulid')
 const findProjectFiles = require('find-project-files')
 
-sh.config.silent = true
-
+const isVerbose = process.argv.includes('--verbose')
 const runNowAlias = process.argv.includes('--alias')
 const libraryDir = sh.pwd().stdout
 const exampleDir = join(libraryDir, 'example')
 const libraryManifest = join(libraryDir, 'package.json')
 const exampleManifest = join(exampleDir, 'package.json')
 const workspaceDir = join(sh.tempdir(), ulid())
+
+sh.config.silent = !isVerbose
 
 if (!sh.test('-f', libraryManifest)) {
   sh.echo('expected ./package.json to exist')
@@ -19,6 +20,13 @@ if (!sh.test('-f', libraryManifest)) {
 if (!sh.test('-f', exampleManifest)) {
   sh.echo('expected ./example/package.json to exist')
   sh.exit(1)
+}
+
+const handleError = result => {
+  if (result.code) {
+    console.error(deployment.stderr)
+    sh.exit(1)
+  }
 }
 
 sh.echo(`┌ temporary workspace: "${workspaceDir}/example"`)
@@ -40,16 +48,30 @@ sh.echo(`│ link the library to the example`)
 sh.cd(join(workspaceDir, 'example'))
 sh.exec('yarn add file:./library')
 
+sh.echo(`│ install the example dependencies`)
+sh.cd(join(workspaceDir, 'example', 'library'))
+sh.exec('yarn install')
+const build = sh.echo(`│ build the example artifacts`)
+handleError(build)
+sh.exec('yarn build')
+
 sh.echo(`│ create now.sh deployment`)
-const deploymentUrl = sh.exec('now --no-clipboard').stdout
-sh.echo(`├ deployment "${deploymentUrl}" ready`)
+sh.cd(join(workspaceDir, 'example'))
+const deployment = sh.exec('now --no-clipboard')
+handleError(deployment)
+sh.echo(`├ deployment "${deployment.stdout}" ready`)
 
 if (runNowAlias) {
   sh.echo(`│ create alias to latest deployment`)
-  const aliasUrl = sh
-    .exec(`now alias set ${deploymentUrl}`)
-    .stdout
-    .split('\n')
-    .split(' ')[2]
+  const alias = sh
+    .exec(`now alias set ${deployment.stdout}`)
+
+  if (!alias.stderr.includes('is a deployment URL or')) handleError(alias)
+  if (alias.code) {
+    console.warn('└ exited without creating alias')
+    process.exit(0)
+  }
+
+  const aliasUrl = alias.stdout.split('\n').split(' ')[2]
   sh.echo(`└ alias "https://${aliasUrl}" updated`)
 }
