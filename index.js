@@ -30,6 +30,8 @@ const handleError = result => {
   sh.exit(1)
 }
 
+const exec = (...args) => handleError(sh.exec(...args))
+
 sh.echo(`┌ temporary workspace → "${workspaceDir}/example"`)
 sh.echo(`│ copy source code to workspace`)
 findProjectFiles(libraryDir).forEach(file => {
@@ -47,23 +49,23 @@ sh.mv(join(workspaceDir, 'library'), join(workspaceDir, 'example', 'library'))
 
 sh.echo(`│ link the library to the example`)
 sh.cd(join(workspaceDir, 'example'))
-handleError(sh.exec('yarn add file:./library'))
+exec('yarn add file:./library')
 
 sh.echo(`│ install the example dependencies`)
 sh.cd(join(workspaceDir, 'example', 'library'))
-handleError(sh.exec('yarn install'))
-const build = handleError(sh.echo(`│ build the example artifacts`))
-handleError(sh.exec('yarn build'))
+exec('yarn install')
+const build = sh.echo(`│ build the example artifacts`)
+exec('yarn build')
 
 sh.echo(`│ create now.sh deployment`)
 sh.cd(join(workspaceDir, 'example'))
-const deployment = handleError(sh.exec('now --no-clipboard'))
+const deployment = exec('now --no-clipboard')
 const deploymentUrl = deployment.stdout
 
 if (runNowAlias) {
   const deployManifest = require(join(exampleDir, 'now.json'), 'utf8')
   ensureArray(deployManifest.alias).forEach(alias => {
     sh.echo(`└ alias creating "${deploymentUrl}" → "https://${alias}"`)
-    handleError(sh.exec(`now alias set ${deploymentUrl} ${alias}`))
+    sh.exec(`now alias set ${deploymentUrl} ${alias}`)
   })
 }
