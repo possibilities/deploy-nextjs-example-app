@@ -1,6 +1,6 @@
 {
   "name": "deploy-nextjs-example-app",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "scripts": {
     "release": "npm-run-all --serial \"release:cut -- {@}\" release:publish --",
