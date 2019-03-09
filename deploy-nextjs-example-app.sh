@@ -44,7 +44,6 @@ echo deployment url: \"${DEPLOYMENT_URL}\"
 if [ ! -z ${RUN_NOW_ALIAS} ];
 then
   echo create alias to latest deployment...
-  export ALIAS_URL=$(now alias set $DEPLOYMENT_URL 2>/dev/null | cut -d' ' -f3)
+  export ALIAS_URL=$(now alias set $DEPLOYMENT_URL | cut -d' ' -f3) 2>/dev/null
   echo done aliasing, app is available at ${ALIAS_URL}
 fi
-
