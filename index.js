@@ -3,6 +3,8 @@ const { join, relative, dirname } = require('path')
 const { ulid } = require('ulid')
 const findProjectFiles = require('find-project-files')
 
+const ensureArray = obj => Array.isArray(obj) ? obj : [obj]
+
 const isVerbose = process.argv.includes('--verbose')
 const runNowAlias = process.argv.includes('--alias')
 const libraryDir = sh.pwd().stdout
@@ -23,13 +25,12 @@ if (!sh.test('-f', exampleManifest)) {
 }
 
 const handleError = result => {
-  if (result.code) {
-    console.error(deployment.stderr)
-    sh.exit(1)
-  }
+  if (!result.code) return result
+  console.error(result.stderr)
+  sh.exit(1)
 }
 
-sh.echo(`┌ temporary workspace: "${workspaceDir}/example"`)
+sh.echo(`┌ temporary workspace → "${workspaceDir}/example"`)
 sh.echo(`│ copy source code to workspace`)
 findProjectFiles(libraryDir).forEach(file => {
   if (!file.stats.isFile()) return
@@ -51,27 +52,18 @@ sh.exec('yarn add file:./library')
 sh.echo(`│ install the example dependencies`)
 sh.cd(join(workspaceDir, 'example', 'library'))
 sh.exec('yarn install')
-const build = sh.echo(`│ build the example artifacts`)
-handleError(build)
+const build = handleError(sh.echo(`│ build the example artifacts`))
 sh.exec('yarn build')
 
 sh.echo(`│ create now.sh deployment`)
 sh.cd(join(workspaceDir, 'example'))
-const deployment = sh.exec('now --no-clipboard')
-handleError(deployment)
-sh.echo(`├ deployment "${deployment.stdout}" ready`)
+const deployment = handleError(sh.exec('now --no-clipboard'))
+const deploymentUrl = deployment.stdout
 
 if (runNowAlias) {
-  sh.echo(`│ create alias to latest deployment`)
-  const alias = sh
-    .exec(`now alias set ${deployment.stdout}`)
-
-  if (!alias.stderr.includes('is a deployment URL or')) handleError(alias)
-  if (alias.code) {
-    console.warn('└ exited without creating alias')
-    process.exit(0)
-  }
-
-  const aliasUrl = alias.stdout.split('\n').split(' ')[2]
-  sh.echo(`└ alias "https://${aliasUrl}" updated`)
+  const deployManifest = require(join(exampleDir, 'now.json'), 'utf8')
+  ensureArray(deployManifest.alias).forEach(alias => {
+    sh.echo(`└ alias creating "${deploymentUrl}" → "https://${alias}"`)
+    handleError(sh.exec(`now alias set ${deploymentUrl} ${alias}`))
+  })
 }
