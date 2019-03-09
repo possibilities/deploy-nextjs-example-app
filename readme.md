@@ -8,7 +8,7 @@ The project is copied and the configured project is placed in a temporary direct
 ## Install
 
 ```Shell
-ln -sf ${PWD}/deploy-nextjs-example-app.sh ~/local/bin/deploy-nextjs-example-app
+yarn global add deploy-nextjs-example-app
 ```
 
 ## Usage
