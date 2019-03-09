@@ -1,6 +1,6 @@
 {
   "name": "deploy-nextjs-example-app",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "license": "MIT",
   "scripts": {
     "test": "standard",
@@ -16,6 +16,7 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "release": "^6.0.1",
     "standard": "^12.0.1"
   }
 }
