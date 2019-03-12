@@ -1,3 +1,5 @@
+# DEPRECATED IN FAVOR OF https://github.com/possibilities/now-next-example-builder
+
 # Deploy Next.js Next.js example app
 
 Deploys a [Next.js](https://nextjs.org/docs) library's `./example` app on [now.sh](https://zeit.co/docs).
